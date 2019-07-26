@@ -3,15 +3,17 @@ import pygame
 
 class Board(object):
 	
-	def __init__(self, x, y, width, height, tiles,dim=3, padding=2):
+	def __init__(self, x, y, width, height, value_arr, color_palette, dim=3, padding=2):
 		self.x = x
 		self.y = y
 		self.width = width
 		self.height = height 
 		self.dim = dim
 		self.padding = padding
-		self.tiles = tiles
+		self.tiles = value_arr
+		self.value_arr = value_arr
 		self.tiles_obj = []
+		self.tiles_pos = []
 		self.free_tile = -1
 		# Drawing Game Board of size (dim*dim)
 		pygame.draw.rect(display, (255,255,190), (50, 150, width, height))
@@ -20,65 +22,69 @@ class Board(object):
 
 
 	def draw_board(self):
-		# pygame.draw.rect(display, (255,255,190), (50, 150, self.width, self.height))
-		# self.board_font =  pygame.font.SysFont("z003", 75)
-		# pygame.display.update()
-		# self.tiles = tiles
 		tile_index = 0
 		tile_dim = self.width / self.dim
 		y = self.y
 		for i in range(self.dim):
 			x = self.x
 			for j in range(self.dim):
-				if self.tiles[tile_index] > 0:
+				if self.value_arr[tile_index] > 0:
 					# tile = pygame.draw.rect(display, (0,50,100), (x, y, tile_dim - 2, tile_dim - 2))
 					# Creating Tile object using Surface object
 					tile = pygame.Surface((tile_dim, tile_dim))
-					tile.fill((0,50,100))
+					tile.fill(color_palette[1])
 					# Append the number to the Tile
-					text = self.board_font.render(str(self.tiles[tile_index]), True, (255,255,190))
+					text = self.board_font.render(str(self.value_arr[tile_index]), True, color_palette[0])
 					ts = (tile_dim / 2) - (text.get_rect().width / 2)
 					tile.blit(text, (ts, ts))
 					# Append new Tile to Tiles list in order to make it more easier to manager later on
 					self.tiles_obj.append(tile)
+					self.tiles_pos.append((x, y))
 					# Update the Screen Window
 					display.blit(tile, (x, y))
+
+					print(tile)
 					pygame.display.update()
 
 				else:
 					tile = pygame.Surface((tile_dim, tile_dim))
-					tile.fill((255, 255, 190))
-					self.free_tile = tile_index
-					self.tiles_obj.append(tile)
+					tile.fill(color_palette[0])
 
-				print(self.tiles[tile_index], x ,y)
+					self.tiles_obj.append(tile)
+					self.tiles_pos.append((x, y))
+					self.free_tile = tile_index
+					print(tile)
+					pygame.display.update()
+
+
+				print(self.value_arr[tile_index], x ,y)
 				pygame.time.delay(100)
 				x += tile_dim
 				tile_index += 1
 
 			y += tile_dim
 		print(self.tiles_obj)
+		print(self.value_arr)
+		print(self.tiles_pos)
 
 
 	def switch_tile(self, tile_index):
-		# if tile_index - self.free_tile == 1:
+		
+		free_pos = self.tiles_pos[self.free_tile]
+		switch_pos = self.tiles_pos[tile_index]
+		
 		self.tiles_obj[tile_index], self.tiles_obj[self.free_tile] = self.tiles_obj[self.free_tile], self.tiles_obj[tile_index]
-		# display.blit(self.tiles_obj[tile_index], (0, 0))
-		# self.tiles_obj.remove(self.tiles_obj[tile_index])
-		# print(self.tiles_obj[self.free_tile].get_height())
-		# self.tiles_obj[tile_index] = pygame.Surface((100, 100))
-		# self.tiles_obj[tile_index].fill((255, 255, 190))
-		display.blit(self.tiles_obj[tile_index], (150,250))
+		self.value_arr[tile_index], self.value_arr[self.free_tile] = self.value_arr[self.free_tile], self.value_arr[tile_index]
+
+		display.blit(self.tiles_obj[tile_index], switch_pos)
+		display.blit(self.tiles_obj[self.free_tile], free_pos)
+		self.free_tile = tile_index
+
 		pygame.display.update()
-		# self.tiles_obj[tile_index]
-		print(self.tiles_obj)
-		# print(self.tiles_obj[tile_index].get_abs_offset())
-
-		# pygame.display.update(self.tiles_obj[tile_index])
-
-		# self.draw_board()
-
-
+		pygame.time.delay(200)
+		print(self.value_arr)
+		print(self.tiles_pos)
+		
 
 
 
@@ -94,9 +100,16 @@ display.blit(text, (200 - tw, 20))
 # pygame.draw.rect(display, (255,255,190), (50, 150, 303, 303))
 pygame.display.update()
 
-b = Board(50, 150, 300, 300, [1,2,3,-1,4,5,6,7,8])
+color_palette = [(255,255,190), (0,50,100)]
+
+b = Board(50, 150, 300, 300, [1,2,3,-1,4,5,6,7,8], color_palette)
 b.draw_board()
 b.switch_tile(4)
+b.switch_tile(1)
+
+
+pygame.display.update()
+
 
 
 pygame.time.delay(3000)
