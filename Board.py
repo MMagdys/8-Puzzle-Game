@@ -31,16 +31,25 @@ class Board(object):
 			x = self.x
 			for j in range(self.dim):
 				if self.tiles[tile_index] > 0:
-					tile = pygame.draw.rect(display, (0,50,100), (x, y, tile_dim - 2, tile_dim - 2))
-					self.tiles_obj.append(tile)
+					# tile = pygame.draw.rect(display, (0,50,100), (x, y, tile_dim - 2, tile_dim - 2))
+					# Creating Tile object using Surface object
+					tile = pygame.Surface((tile_dim, tile_dim))
+					tile.fill((0,50,100))
+					# Append the number to the Tile
 					text = self.board_font.render(str(self.tiles[tile_index]), True, (255,255,190))
 					ts = (tile_dim / 2) - (text.get_rect().width / 2)
-					display.blit(text, (x + ts, y + ts))
+					tile.blit(text, (ts, ts))
+					# Append new Tile to Tiles list in order to make it more easier to manager later on
+					self.tiles_obj.append(tile)
+					# Update the Screen Window
+					display.blit(tile, (x, y))
 					pygame.display.update()
 
 				else:
+					tile = pygame.Surface((tile_dim, tile_dim))
+					tile.fill((255, 255, 190))
 					self.free_tile = tile_index
-					self.tiles_obj.append(None)
+					self.tiles_obj.append(tile)
 
 				print(self.tiles[tile_index], x ,y)
 				pygame.time.delay(100)
@@ -53,13 +62,19 @@ class Board(object):
 
 	def switch_tile(self, tile_index):
 		# if tile_index - self.free_tile == 1:
-		# self.tiles[tile_index], self.tiles[self.free_tile] = self.tiles[self.free_tile], self.tiles[tile_index]
-		self.tiles_obj[tile_index].x -= 50
-		pygame.display.update(self.tiles_obj)
+		self.tiles_obj[tile_index], self.tiles_obj[self.free_tile] = self.tiles_obj[self.free_tile], self.tiles_obj[tile_index]
+		# display.blit(self.tiles_obj[tile_index], (0, 0))
+		# self.tiles_obj.remove(self.tiles_obj[tile_index])
+		# print(self.tiles_obj[self.free_tile].get_height())
+		# self.tiles_obj[tile_index] = pygame.Surface((100, 100))
+		# self.tiles_obj[tile_index].fill((255, 255, 190))
+		display.blit(self.tiles_obj[tile_index], (150,250))
+		pygame.display.update()
 		# self.tiles_obj[tile_index]
 		print(self.tiles_obj)
+		# print(self.tiles_obj[tile_index].get_abs_offset())
 
-		pygame.display.update()
+		# pygame.display.update(self.tiles_obj[tile_index])
 
 		# self.draw_board()
 
