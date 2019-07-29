@@ -1,16 +1,20 @@
 
 class State(object):
 
-	def __init__(self, value, parent=None):
+	def __init__(self, value, parent=None, switch_tup=None):
 
 		self.value = value
 		self.parent = parent
+		self.hash_value = ''.join(str(i) for i in self.value)
 		# self.child = []
 		# self.cost = cost
 		if self.parent:
 			self.depth = self.parent.depth + 1
+			self.path = parent.path[:]
+			self.path.append(switch_tup)
 		else:
 			self.depth = 0
+			self.path = []
 
 
 	def __str__(self):
@@ -52,26 +56,25 @@ class State(object):
 				tmp_lst = self.value[:]
 				tmp_lst[self.free_tile], tmp_lst[step] = tmp_lst[step] , tmp_lst[self.free_tile]
 				tmp_lst[0] = step
-				self.neighbours.append(state(tmp_lst, self))
+				self.neighbours.append(State(tmp_lst, self, (self.free_tile, step)))
 
-				# print(tmp_lst[0])
-				# for i in range(3):
-				# 	print(tmp_lst[i*3+1: i*3+4])
-				# print(move, step)
-				# print("===\n")
+		return self.neighbours
 
 
 
 
 
-inital = state([6, 1,2,3,5,4,0,6,7,8], 0)
-goal = state([1,2,3,-1,4,5,6], 0)
+# inital = State([6, 1,2,3,5,4,0,6,7,8], 0)
+# goal = State([1,2,3,-1,4,5,6], 0)
 
-print(inital)
-
-
-inital.generate_neighbours()
+# print(inital)
 
 
-print(inital.neighbours)
+# inital.generate_neighbours()
+
+# print(inital.path)
+# print(inital.neighbours)
+# for n in inital.neighbours:
+# 	print(n.path)
+# 	print("====")
 # print(inital == goal)
