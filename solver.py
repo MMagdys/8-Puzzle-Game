@@ -1,18 +1,11 @@
 from state import State
 from collections import deque
-import queue
+import queue, heapq
+import math
 
 
 
-inital_state = State([4,1,2,3,0,4,5,6,7,8])
-goal_state = State([9,1,2,3,4,5,6,7,8,0])
-# inital_state.generate_neighbours()
-# neighbours = inital_state.neighbours
-# print(neighbours)
 
-# for neighbour in neighbours:
-# 	if neighbour == goal_state:
-# 		print("SUCCESS!")
 
 
 
@@ -30,7 +23,7 @@ def BFS(inital_state, goal_state):
 			print(state.depth)
 			print(state.path)
 			print("SUCCESS!")
-			return 
+			return state.path
 
 		for neighbour in state.generate_neighbours():
 			if (neighbour not in frontier) and (neighbour.hash_value not in explored):
@@ -54,7 +47,7 @@ def DFS(inital_state, goal_state):
 			print(state.depth)
 			print(state.path)
 			print("SUCCESS!")
-			return 
+			return state.path
 
 		for neighbour in state.generate_neighbours():
 			if (neighbour not in frontier) and (neighbour.hash_value not in explored):
@@ -64,23 +57,73 @@ def DFS(inital_state, goal_state):
 
 
 
-def A_star(inital_state, goal_state):
+def A_star(inital_state, goal_state, method="mnt"):
 
-	pass
+	def manhattan_distance(state):
+		value_arr = state.value
+		dist = 0
+		for i, val in enumerate(value_arr):
+			if val == 0:
+				continue
 
-
-
-
-BFS(inital_state, goal_state)
-
-
-arr = [[1, 2, 3], [0, 4, 5], [6, 7, 8]]
-
-def manhattan_distance():
-
-	for i in range(3):
-		for j in range(3):
-			print(arr[0].index(1))
+			goal_y, goal_x = val // 3, val % 3
+			y, x = i // 3, i % 3
+			dist += abs(goal_y-y) + abs(goal_x-x)
+		return dist
 
 
-# manhattan_distance()
+	def euclidean_distance(state):
+		value_arr = state.value
+		dist = 0
+		for i, val in enumerate(value_arr):
+			if val == 0:
+				continue
+
+			goal_y, goal_x = val // 3, val % 3
+			y, x = i // 3, i % 3
+			dist += math.sqrt(abs(goal_y-y)**2 + abs(goal_x-x)**2)
+		return dist
+
+
+	function = {"mnt": manhattan_distance, "euc": euclidean_distance}
+	heuristic = function[method]
+
+	frontier = []
+	explored = set()
+	heapq.heappush(frontier, (heuristic(inital_state), inital_state))
+	frontier_dict = dict()
+	frontier_dict[inital_state.hash_value] = inital_state
+	print(frontier)
+
+	while frontier:
+		cost, state = heapq.heappop(frontier)
+		del frontier_dict[state.hash_value]
+		explored.add(state.hash_value)
+
+		print(frontier)
+		if state == goal_state:
+			print(state.depth)
+			print(state.path)
+			print("SUCCESS!")
+			return state.path
+
+		for neighbour in state.generate_neighbours():
+			if (neighbour.hash_value not in frontier_dict) and (neighbour.hash_value not in explored):
+				heapq.heappush(frontier, (heuristic(neighbour)+ neighbour.depth, neighbour))
+				frontier_dict[neighbour.hash_value] = neighbour
+
+			elif neighbour.hash_value in frontier_dict:
+				reexplored = frontier_dict[neighbour.hash_value]
+
+				if neighbour.depth < reexplored.depth:
+					reexplored.parent = state
+					reexplored.depth = neighbour.depth
+				
+
+	
+# FOR TESTING
+# inital_state = State([4,1,2,3,0,4,5,6,7,8])
+# goal_state = State([9,1,2,3,4,5,6,7,8,0])
+
+# BFS(inital_state, goal_state)
+# A_star(inital_state, goal_state, "euc")

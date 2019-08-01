@@ -35,6 +35,10 @@ class State(object):
 		return self.value == other.value
 
 
+	def __lt__(self, other):
+		return self.depth < other.depth
+
+
 	def generate_neighbours(self):
 
 		self.neighbours = []
@@ -63,7 +67,7 @@ class State(object):
 
 
 
-
+# FOR TESTING
 # inital = State([6, 1,2,3,5,4,0,6,7,8], 0)
 # goal = State([1,2,3,-1,4,5,6], 0)
 
