@@ -1,6 +1,8 @@
 import pygame
 from solver import BFS, DFS, A_star
 from state import State
+import argparse
+
 
 
 class Board(object):
@@ -19,7 +21,7 @@ class Board(object):
 		self.tiles_pos = []
 		self.free_tile = -1
 		# Drawing Game Board of size (dim*dim)
-		pygame.draw.rect(display, (255,255,190), (50, 150, width, height))
+		pygame.draw.rect(display, (255,255,190), (x, y, width, height))
 		self.board_font =  pygame.font.SysFont("z003", 75)
 		pygame.display.update()
 
@@ -34,7 +36,7 @@ class Board(object):
 				if self.value_arr[tile_index] > 0:
 					# tile = pygame.draw.rect(display, (0,50,100), (x, y, tile_dim - 2, tile_dim - 2))
 					# Creating Tile object using Surface object
-					tile = pygame.Surface((tile_dim -padding, tile_dim -padding))
+					tile = pygame.Surface((tile_dim - self.padding, tile_dim - self.padding))
 					tile.fill(self.color_palette[1])
 					# Append the number to the Tile
 					text = self.board_font.render(str(self.value_arr[tile_index]), True, self.color_palette[0])
@@ -90,29 +92,42 @@ class Board(object):
 		
 
 
-def main():
+def game(method):
 
 	pygame.init()
 	global display
-	display = pygame.display.set_mode((400,500))
+	display = pygame.display.set_mode((310,500))
 	display.fill((192, 192, 192))
 	pygame.display.set_caption("8 Puzzle")
+
+	# Game Name
 	font = pygame.font.SysFont(None, 50)
 	text = font.render("8 Puzzle", True, (0,50,100))
 	tw = text.get_rect().width / 2
-	display.blit(text, (200 - tw, 20))
-	# pygame.draw.rect(display, (255,255,190), (50, 150, 303, 303))
+	display.blit(text, (155 - tw, 20))
+
+	# Moves Counter
+	n = 0
+	h2 = pygame.font.SysFont(None, 25)
+	move_count = h2.render("moves: "+ str(n), True, (0,50,100))
+	display.blit(move_count, (10, 120))
 	pygame.display.update()
 
 	color_palette = [(255,255,190), (0,50,100)]
 
-	b = Board(50, 150, 300, 300, [1,2,3,-1,4,5,6,7,8], color_palette)
+	b = Board(5, 150, 300, 300, [1,2,3,-1,4,5,6,7,8], color_palette)
 	b.draw_board()
 	
 	inital_state = State([4,1,2,3,0,4,5,6,7,8])
 	goal_state = State([9,1,2,3,4,5,6,7,8,0])
 	# path = BFS(inital_state, goal_state)
-	path = A_star(inital_state, goal_state)
+	path, best_moves = method(inital_state, goal_state)
+
+	# Best moves count
+	best_count = h2.render("Best moves: "+ str(best_moves), True, (0,50,100))
+	tw = best_count.get_rect().width
+	display.blit(best_count, (300 - tw, 120))
+	pygame.display.update()
 
 	# path = [(4, 5), (5, 6), (6, 9), (9, 8), (8, 7), (7, 4), (4, 5), (5, 8), (8, 9), (9, 6), (6, 5), (5, 4), (4, 7), (7, 8), (8, 9)]
 
@@ -121,17 +136,24 @@ def main():
 		pygame.time.delay(500)
 
 
-	# b.switch_tile(4)
-	# b.switch_tile(1)
-
-
-	pygame.display.update()
-
-
-
 	pygame.time.delay(3000)
 	pygame.quit()
 	quit()
+
+
+def main():
+
+
+	parser = argparse.ArgumentParser(description = "8 Puzzle Game")
+
+	parser.add_argument("method", type = str, help = "Algorithm used to solve the game")
+
+	args = parser.parse_args()
+
+	function = {"bfs": BFS, "dfs": DFS, "astar":A_star}
+
+	method = function[args.method]
+	game(method)
 
 
 if __name__ == '__main__':

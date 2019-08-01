@@ -23,7 +23,7 @@ def BFS(inital_state, goal_state):
 			print(state.depth)
 			# print(state.path)
 			# print("SUCCESS!")
-			return state.path
+			return state.path, state.depth
 
 		for neighbour in state.generate_neighbours():
 			if (neighbour not in frontier) and (neighbour.hash_value not in explored):
@@ -47,7 +47,7 @@ def DFS(inital_state, goal_state):
 			print(state.depth)
 			# print(state.path)
 			# print("SUCCESS!")
-			return state.path
+			return state.path, state.depth
 
 		for neighbour in state.generate_neighbours():
 			if (neighbour not in frontier) and (neighbour.hash_value not in explored):
@@ -105,7 +105,7 @@ def A_star(inital_state, goal_state, method="mnt"):
 			print(state.depth)
 			# print(state.path)
 			# print("SUCCESS!")
-			return state.path
+			return state.path, state.depth
 
 		for neighbour in state.generate_neighbours():
 			if (neighbour.hash_value not in frontier_dict) and (neighbour.hash_value not in explored):
