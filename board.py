@@ -34,7 +34,7 @@ class Board(object):
 				if self.value_arr[tile_index] > 0:
 					# tile = pygame.draw.rect(display, (0,50,100), (x, y, tile_dim - 2, tile_dim - 2))
 					# Creating Tile object using Surface object
-					tile = pygame.Surface((tile_dim, tile_dim))
+					tile = pygame.Surface((tile_dim -padding, tile_dim -padding))
 					tile.fill(self.color_palette[1])
 					# Append the number to the Tile
 					text = self.board_font.render(str(self.value_arr[tile_index]), True, self.color_palette[0])

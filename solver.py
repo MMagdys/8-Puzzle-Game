@@ -18,11 +18,11 @@ def BFS(inital_state, goal_state):
 	while frontier:
 		state = frontier.popleft()
 		explored.add(state.hash_value)
-		print(state)
+		# print(state)
 		if state == goal_state:
 			print(state.depth)
-			print(state.path)
-			print("SUCCESS!")
+			# print(state.path)
+			# print("SUCCESS!")
 			return state.path
 
 		for neighbour in state.generate_neighbours():
@@ -42,11 +42,11 @@ def DFS(inital_state, goal_state):
 	while frontier:
 		state = frontier.pop()
 		explored.add(state.hash_value)
-		print(state)
+		# print(state)
 		if state == goal_state:
 			print(state.depth)
-			print(state.path)
-			print("SUCCESS!")
+			# print(state.path)
+			# print("SUCCESS!")
 			return state.path
 
 		for neighbour in state.generate_neighbours():
@@ -93,18 +93,18 @@ def A_star(inital_state, goal_state, method="mnt"):
 	heapq.heappush(frontier, (heuristic(inital_state), inital_state))
 	frontier_dict = dict()
 	frontier_dict[inital_state.hash_value] = inital_state
-	print(frontier)
+	# print(frontier)
 
 	while frontier:
 		cost, state = heapq.heappop(frontier)
 		del frontier_dict[state.hash_value]
 		explored.add(state.hash_value)
 
-		print(frontier)
+		# print(frontier)
 		if state == goal_state:
 			print(state.depth)
-			print(state.path)
-			print("SUCCESS!")
+			# print(state.path)
+			# print("SUCCESS!")
 			return state.path
 
 		for neighbour in state.generate_neighbours():
